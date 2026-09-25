@@ -358,32 +358,40 @@ private fun CaloriesComparisonChart(
                     .fillMaxWidth()
                     .height(140.dp)
             ) {
-                val gap = size.width * 0.15f
-                val barWidth = (size.width - gap * 3f) / 2f
+                // Thinner, sleeker bars
+                val barWidth = 40.dp.toPx() 
+                val gap = 40.dp.toPx()
+                
+                // Center the two bars in the middle of the canvas
+                val totalWidth = (barWidth * 2) + gap
+                val startX = (size.width - totalWidth) / 2f
+                
                 val consumedHeight = ((consumed / chartMax) * size.height).coerceIn(0f, size.height)
                 val goalHeight = ((goal / chartMax) * size.height).coerceIn(0f, size.height)
-                val corner = CornerRadius(barWidth / 3f, barWidth / 3f)
+                val corner = CornerRadius(barWidth / 2f, barWidth / 2f)
 
+                // Consumed Bar
                 drawRoundRect(
                     color = PrimaryGreen,
-                    topLeft = Offset(gap, size.height - consumedHeight),
+                    topLeft = Offset(startX, size.height - consumedHeight),
                     size = Size(barWidth, consumedHeight),
                     cornerRadius = corner
                 )
+                // Goal Bar
                 drawRoundRect(
-                    color = Color(0xFFBDBDBD),
-                    topLeft = Offset(gap * 2f + barWidth, size.height - goalHeight),
+                    color = Color(0xFF94A3B8), // Slate 400 for a nicer gray
+                    topLeft = Offset(startX + barWidth + gap, size.height - goalHeight),
                     size = Size(barWidth, goalHeight),
                     cornerRadius = corner
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                LegendItem(PrimaryGreen, "Consumidas: $consumed kcal")
-                LegendItem(Color(0xFFBDBDBD), "Objetivo: $goal kcal")
+                LegendItem(PrimaryGreen, "Consumidas:\n$consumed kcal")
+                LegendItem(Color(0xFF94A3B8), "Objetivo:\n$goal kcal")
             }
         }
     }

@@ -1,14 +1,22 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.saracervantes.focusmeal.ui.screens.addmeal
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import android.provider.MediaStore
 import com.saracervantes.focusmeal.ui.components.FocusMealTextField
 
 val MEAL_CATEGORIES = listOf(
@@ -24,6 +32,19 @@ fun AddMealScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val expandedCategory = remember { mutableStateOf(false) }
+    
+    val context = LocalContext.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri ->
+            if (uri != null) {
+                val bitmap = MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                // Ensure bitmap is in a compatible format for Gemini
+                val softwareBitmap = bitmap.copy(android.graphics.Bitmap.Config.ARGB_8888, true)
+                viewModel.analyzeImage(softwareBitmap)
+            }
+        }
+    )
 
     LaunchedEffect(uiState.success) {
         if (uiState.success) {
@@ -52,9 +73,42 @@ fun AddMealScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
+                .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = "¡Deja que la IA calcule tus calorías!",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = {
+                            photoPickerLauncher.launch(
+                                PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                            )
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        enabled = !uiState.isLoading,
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+                    ) {
+                        Icon(Icons.Filled.CameraAlt, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Subir foto de mi plato")
+                    }
+                }
+            }
             FocusMealTextField(
                 value = uiState.name,
                 onValueChange = { viewModel.updateField("name", it) },
@@ -72,6 +126,7 @@ fun AddMealScreen(
                         label = { Text("Categoría") },
                         readOnly = true,
                         modifier = Modifier
+                            .menuAnchor()
                             .fillMaxWidth()
                             .padding(vertical = 8.dp),
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory.value) },
@@ -96,12 +151,7 @@ fun AddMealScreen(
                     }
                 }
 
-            FocusMealTextField(
-                value = uiState.category,
-                onValueChange = { viewModel.updateField("category", it) },
-                label = "Categoría",
-                enabled = !uiState.isLoading
-            )
+
 
             FocusMealTextField(
                 value = uiState.calories,

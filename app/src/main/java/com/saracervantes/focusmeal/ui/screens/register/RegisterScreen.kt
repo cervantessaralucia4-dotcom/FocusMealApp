@@ -1,9 +1,13 @@
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 package com.saracervantes.focusmeal.ui.screens.register
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -44,40 +48,66 @@ fun RegisterScreen(
         )
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Create Account",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "Start your FocusMeal journey today",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.RestaurantMenu,
+                    contentDescription = "Logo",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(bottom = 12.dp)
+                )
+                Text(
+                    text = "Crear Cuenta",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = "Empieza tu camino a comer mejor",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 24.dp)
+                )
 
         FocusMealTextField(
             value = name,
             onValueChange = { name = it },
-            label = "Full Name"
+            label = "Nombre Completo"
         )
 
         FocusMealTextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email"
+            label = "Correo electrónico"
         )
 
         FocusMealTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            label = "Contraseña",
             isPassword = true
         )
 
@@ -97,6 +127,7 @@ fun RegisterScreen(
                 label = { Text("Género") },
                 readOnly = true,
                 modifier = Modifier
+                    .menuAnchor()
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGender.value) },
@@ -131,6 +162,7 @@ fun RegisterScreen(
                 label = { Text("Tipo de Dieta") },
                 readOnly = true,
                 modifier = Modifier
+                    .menuAnchor()
                     .fillMaxWidth()
                     .padding(vertical = 8.dp),
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDiet.value) },
@@ -158,7 +190,7 @@ fun RegisterScreen(
         val state = registerState
         if (state is Resource.Error) {
             Text(
-                text = state.message ?: "Registration failed",
+                text = state.message ?: "Error al registrarse",
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -178,12 +210,14 @@ fun RegisterScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Text("Register")
+                Text("Registrarse")
             }
         }
 
         TextButton(onClick = onNavigateToLogin) {
-            Text("Already have an account? Sign In")
+            Text("¿Ya tienes una cuenta? Inicia sesión")
+        }
+            }
         }
     }
 }

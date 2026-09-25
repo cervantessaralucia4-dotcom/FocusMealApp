@@ -53,11 +53,17 @@ fun ProgressScreen(
 
             val error = uiState.error
             if (error != null) {
-                Text(
-                    text = error,
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
-                )
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Text(
+                        text = error,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(12.dp)
+                    )
+                }
             }
 
             Card(
@@ -80,45 +86,55 @@ fun ProgressScreen(
                 }
             }
 
-            Text(
-                text = "Registrar nuevo progreso",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
-
-            FocusMealTextField(
-                value = uiState.weight,
-                onValueChange = { viewModel.updateField("weight", it) },
-                label = "Peso (kg)",
-                enabled = !uiState.isLoading
-            )
-
-            FocusMealTextField(
-                value = uiState.caloriesConsumed,
-                onValueChange = { viewModel.updateField("caloriesConsumed", it) },
-                label = "Calorías consumidas",
-                enabled = !uiState.isLoading
-            )
-
-            Button(
-                onClick = viewModel::addRecord,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                enabled = !uiState.isLoading && uiState.weight.isNotBlank(),
-                shape = MaterialTheme.shapes.medium
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
             ) {
-                if (uiState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onPrimary
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Text(
+                        text = "Registrar nuevo progreso",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.primary
                     )
-                } else {
-                    Text("Guardar Registro")
+
+                    FocusMealTextField(
+                        value = uiState.weight,
+                        onValueChange = { viewModel.updateField("weight", it) },
+                        label = "Peso (kg)",
+                        enabled = !uiState.isLoading
+                    )
+
+                    FocusMealTextField(
+                        value = uiState.caloriesConsumed,
+                        onValueChange = { viewModel.updateField("caloriesConsumed", it) },
+                        label = "Calorías consumidas",
+                        enabled = !uiState.isLoading
+                    )
+
+                    Button(
+                        onClick = viewModel::addRecord,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
+                        enabled = !uiState.isLoading && uiState.weight.isNotBlank()
+                    ) {
+                        if (uiState.isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(24.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        } else {
+                            Text("Guardar Registro")
+                        }
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Historial",

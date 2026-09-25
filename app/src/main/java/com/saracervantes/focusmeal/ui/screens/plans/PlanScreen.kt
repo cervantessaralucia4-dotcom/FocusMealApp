@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.AutoAwesome
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -71,11 +72,36 @@ fun PlansScreen(
                 )
             }
 
-            Text(
-                text = "Crear nuevo plan",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "Crear nuevo plan",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        
+                        // AI GENERATOR BUTTON
+                        FilledTonalButton(
+                            onClick = viewModel::generateAIPlan,
+                            enabled = !uiState.isLoading
+                        ) {
+                            Icon(Icons.Filled.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Generar con IA")
+                        }
+                    }
 
             FocusMealTextField(
                 value = uiState.name,
@@ -108,6 +134,7 @@ fun PlansScreen(
                     label = { Text("Tipo de Dieta") },
                     readOnly = true,
                     modifier = Modifier
+                        .menuAnchor()
                         .fillMaxWidth()
                         .padding(vertical = 8.dp),
                     trailingIcon = { androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDiet.value) },
@@ -136,7 +163,7 @@ fun PlansScreen(
                 onClick = viewModel::addPlan,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
+                    .height(50.dp),
                 enabled = !uiState.isLoading && uiState.name.isNotBlank() && uiState.dietType.isNotBlank(),
                 shape = MaterialTheme.shapes.medium
             ) {
@@ -149,6 +176,8 @@ fun PlansScreen(
                     Text("Crear Plan")
                 }
             }
+                } // End of Column inside ElevatedCard
+            } // End of ElevatedCard
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -83,4 +83,47 @@ class PlanViewModel(
             }
         }
     }
+    private val aiRepository = com.saracervantes.focusmeal.data.repository.AiRepository()
+    private val userRepository = com.saracervantes.focusmeal.data.repository.UserRepository(com.google.firebase.firestore.FirebaseFirestore.getInstance())
+
+    fun generateAIPlan() {
+        viewModelScope.launch {
+            val userId = authRepository.currentUser?.uid ?: return@launch
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            
+            // Get user profile
+            val userResult = userRepository.getUser(userId)
+            if (userResult is Resource.Success && userResult.data != null) {
+                val user = userResult.data
+                // Ask Gemini to generate the plan
+                val aiResult = aiRepository.generateDietPlan(
+                    weight = user.weight,
+                    age = user.age,
+                    goal = user.goal,
+                    dietType = user.dietType
+                )
+                
+                when (aiResult) {
+                    is Resource.Success -> {
+                        val planData = aiResult.data
+                        if (planData != null) {
+                            _uiState.update { 
+                                it.copy(
+                                    isLoading = false,
+                                    name = planData.name,
+                                    description = planData.description,
+                                    caloriesPerDay = planData.caloriesPerDay.toString(),
+                                    dietType = user.dietType // Autofill user's preferred diet
+                                )
+                            }
+                        }
+                    }
+                    is Resource.Error -> _uiState.update { it.copy(isLoading = false, error = aiResult.message) }
+                    is Resource.Loading -> Unit
+                }
+            } else {
+                _uiState.update { it.copy(isLoading = false, error = "No se pudo obtener el perfil del usuario") }
+            }
+        }
+    }
 }

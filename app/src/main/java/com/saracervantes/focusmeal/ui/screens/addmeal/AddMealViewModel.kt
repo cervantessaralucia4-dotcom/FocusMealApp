@@ -82,4 +82,35 @@ class AddMealViewModel(
     fun resetSuccess() {
         _uiState.update { it.copy(success = false) }
     }
+
+    private val aiRepository = com.saracervantes.focusmeal.data.repository.AiRepository()
+
+    fun analyzeImage(bitmap: android.graphics.Bitmap) {
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, error = null) }
+            val result = aiRepository.analyzeFoodImage(bitmap)
+            when (result) {
+                is Resource.Success -> {
+                    val food = result.data
+                    if (food != null) {
+                        _uiState.update { current ->
+                            current.copy(
+                                isLoading = false,
+                                name = food.name,
+                                calories = if (food.calories > 0) food.calories.toString() else current.calories,
+                                proteins = if (food.proteins > 0f) food.proteins.toString() else current.proteins,
+                                carbs = if (food.carbs > 0f) food.carbs.toString() else current.carbs,
+                                fats = if (food.fats > 0f) food.fats.toString() else current.fats,
+                                error = if (food.name == "Desconocido") "No pude reconocer comida en la foto" else null
+                            )
+                        }
+                    }
+                }
+                is Resource.Error -> {
+                    _uiState.update { it.copy(isLoading = false, error = result.message) }
+                }
+                is Resource.Loading -> Unit
+            }
+        }
+    }
 }

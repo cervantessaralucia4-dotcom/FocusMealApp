@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1234567890",
-    "project_id": "focusmeal-placeholder",
-    "storage_bucket": "focusmeal-placeholder.appspot.com"
+    "project_number": "281241787721",
+    "project_id": "focusmealapp",
+    "storage_bucket": "focusmealapp.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1234567890:android:abcdef123456",
+        "mobilesdk_app_id": "1:281241787721:android:128f108694de7341880e98",
         "android_client_info": {
           "package_name": "com.saracervantes.focusmeal"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaPlaceholderKey"
+          "current_key": "AIzaSyCEfth_esqc1l9_8oYzlhkF-H9iGZOyLzw"
         }
       ],
       "services": {

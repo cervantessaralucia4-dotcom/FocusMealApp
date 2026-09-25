@@ -81,4 +81,7 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Google Gemini AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
 }

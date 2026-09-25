@@ -1,8 +1,11 @@
 package com.saracervantes.focusmeal.ui.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,40 +30,66 @@ fun LoginScreen(
         }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Welcome Back",
-            style = MaterialTheme.typography.headlineLarge,
-            color = MaterialTheme.colorScheme.primary
-        )
-        Text(
-            text = "Sign in to continue your wellness journey",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(bottom = 32.dp)
-        )
+        ElevatedCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
+            colors = CardDefaults.elevatedCardColors(
+                containerColor = MaterialTheme.colorScheme.surface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.RestaurantMenu,
+                    contentDescription = "Logo",
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
+                        .size(64.dp)
+                        .padding(bottom = 16.dp)
+                )
+                Text(
+                    text = "Focus Meal",
+                    style = MaterialTheme.typography.headlineLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+                Text(
+                    text = "Inicia sesión para continuar tu viaje",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 32.dp)
+                )
 
         FocusMealTextField(
             value = email,
             onValueChange = { email = it },
-            label = "Email"
+            label = "Correo electrónico"
         )
 
         FocusMealTextField(
             value = password,
             onValueChange = { password = it },
-            label = "Password",
+            label = "Contraseña",
             isPassword = true
         )
 
         if (loginState is Resource.Error) {
             Text(
-                text = loginState?.message ?: "Login failed",
+                text = loginState?.message ?: "Error al iniciar sesión",
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -80,12 +109,14 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onPrimary
                 )
             } else {
-                Text("Sign In")
+                Text("Iniciar Sesión")
             }
         }
 
         TextButton(onClick = onNavigateToRegister) {
-            Text("Don't have an account? Register")
+            Text("¿No tienes cuenta? Regístrate gratis")
+        }
+            }
         }
     }
 }
