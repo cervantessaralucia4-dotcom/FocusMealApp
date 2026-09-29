@@ -169,33 +169,39 @@ fun FocusMealTopBar(
     onRefresh: (() -> Unit)? = null,
     navigationIcon: @Composable () -> Unit = {}
 ) {
-    TopAppBar(
-        title = { 
-            Box(modifier = Modifier.fillMaxWidth().padding(end = if (onRefresh != null) 0.dp else 48.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                androidx.compose.foundation.Image(
-                    painter = androidx.compose.ui.res.painterResource(id = com.saracervantes.focusmeal.R.drawable.logo),
-                    contentDescription = "FocusMeal Logo",
-                    modifier = Modifier.height(48.dp)
-                )
-            }
-        },
-        navigationIcon = navigationIcon,
-        actions = {
-            if (onRefresh != null) {
-                IconButton(onClick = onRefresh) {
-                    Icon(Icons.Filled.Refresh, contentDescription = "Actualizar")
+    androidx.compose.material3.Surface(
+        shadowElevation = 2.dp,
+        color = MaterialTheme.colorScheme.surface
+    ) {
+        TopAppBar(
+            title = { 
+                Box(modifier = Modifier.fillMaxWidth().padding(end = if (onRefresh != null) 0.dp else 48.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                    androidx.compose.foundation.Image(
+                        painter = androidx.compose.ui.res.painterResource(id = com.saracervantes.focusmeal.R.drawable.logo),
+                        contentDescription = "FocusMeal Logo",
+                        modifier = Modifier.height(36.dp),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                    )
                 }
-            } else {
-                Spacer(modifier = Modifier.width(48.dp))
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
-            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
-            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+            },
+            navigationIcon = navigationIcon,
+            actions = {
+                if (onRefresh != null) {
+                    IconButton(onClick = onRefresh) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "Actualizar", tint = MaterialTheme.colorScheme.primary)
+                    }
+                } else {
+                    Spacer(modifier = Modifier.width(48.dp))
+                }
+            },
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                actionIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                navigationIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant
+            )
         )
-    )
+    }
 }
 
 @Composable
@@ -211,14 +217,15 @@ fun FocusMealBottomBar(
     NavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.primary,
-        tonalElevation = 8.dp
+        tonalElevation = 12.dp,
+        windowInsets = androidx.compose.foundation.layout.WindowInsets(0, 0, 0, 0)
     ) {
         val colors = NavigationBarItemDefaults.colors(
-            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+            selectedIconColor = MaterialTheme.colorScheme.primary,
             selectedTextColor = MaterialTheme.colorScheme.primary,
-            indicatorColor = MaterialTheme.colorScheme.primary,
-            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+            indicatorColor = androidx.compose.ui.graphics.Color.Transparent,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
         )
         NavigationBarItem(
             selected = currentRoute == "Inicio",
