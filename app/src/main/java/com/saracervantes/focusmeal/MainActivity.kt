@@ -33,6 +33,10 @@ import com.saracervantes.focusmeal.ui.screens.profile.ProfileScreen
 import com.saracervantes.focusmeal.ui.screens.profile.ProfileViewModel
 import com.saracervantes.focusmeal.ui.screens.register.RegisterScreen
 import com.saracervantes.focusmeal.ui.screens.register.RegisterViewModel
+import com.saracervantes.focusmeal.ui.screens.dashboard.AdminDashboardScreen
+import com.saracervantes.focusmeal.ui.screens.dashboard.NutritionistDashboardScreen
+import com.saracervantes.focusmeal.ui.screens.subscription.SubscriptionScreen
+import com.saracervantes.focusmeal.ui.screens.subscription.SubscriptionViewModel
 import com.saracervantes.focusmeal.ui.theme.FocusMealTheme
 
 class MainActivity : ComponentActivity() {
@@ -60,12 +64,15 @@ fun FocusMealApp() {
         ) {
             composable("login") {
                 val viewModel: LoginViewModel = viewModel {
-                    LoginViewModel(authRepository)
+                    LoginViewModel(
+                        authRepository = authRepository,
+                        userRepository = AppModule.userRepository
+                    )
                 }
                 LoginScreen(
                     viewModel = viewModel,
-                    onLoginSuccess = {
-                        navController.navigate("home") {
+                    onLoginSuccess = { route ->
+                        navController.navigate(route) {
                             popUpTo("login") { inclusive = true }
                         }
                     },
@@ -166,7 +173,8 @@ fun FocusMealApp() {
                 }
                 ChatScreen(
                     viewModel = chatViewModel,
-                    onBack = { navController.popBackStack() }
+                    onBack = { navController.popBackStack() },
+                    onNavigateToSubscriptions = { navController.navigate("subscriptions") }
                 )
             }
             composable("pqrs") {
@@ -176,6 +184,24 @@ fun FocusMealApp() {
                 )
                 PQRSScreen(
                     viewModel = pqrsViewModel,
+                    onBack = { navController.popBackStack() }
+                )
+            }
+            composable("nutritionist_dashboard") {
+                NutritionistDashboardScreen()
+            }
+            composable("admin_dashboard") {
+                AdminDashboardScreen()
+            }
+            composable("subscriptions") {
+                val subscriptionViewModel: SubscriptionViewModel = viewModel {
+                    SubscriptionViewModel(
+                        authRepository = AppModule.authRepository,
+                        userRepository = AppModule.userRepository
+                    )
+                }
+                SubscriptionScreen(
+                    viewModel = subscriptionViewModel,
                     onBack = { navController.popBackStack() }
                 )
             }

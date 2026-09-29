@@ -1,6 +1,9 @@
 package com.saracervantes.focusmeal.ui.screens
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.saracervantes.focusmeal.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -49,10 +53,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.saracervantes.focusmeal.ui.components.TarjetaFocusMeal
 import com.saracervantes.focusmeal.ui.screens.home.HomeViewModel
-import com.saracervantes.focusmeal.ui.theme.PrimaryGreen
-import com.saracervantes.focusmeal.ui.theme.SecondaryGreen
-import com.saracervantes.focusmeal.ui.theme.TertiaryGreen
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -74,7 +76,13 @@ fun HomeScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text("FocusMeal") },
+                title = { 
+                    Image(
+                        painter = painterResource(id = R.drawable.logo),
+                        contentDescription = "FocusMeal Logo",
+                        modifier = Modifier.height(40.dp)
+                    )
+                },
                 actions = {
                     IconButton(onClick = viewModel::loadDashboard) {
                         Icon(Icons.Filled.Refresh, contentDescription = "Actualizar")
@@ -82,12 +90,15 @@ fun HomeScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface
+            ) {
                 NavigationBarItem(
                     selected = true,
                     onClick = {},
@@ -130,11 +141,13 @@ fun HomeScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
         ) {
             when {
                 uiState.isLoading -> CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.primary
                 )
                 uiState.error != null -> ErrorContent(
                     message = uiState.error.orEmpty(),
@@ -167,24 +180,25 @@ private fun DashboardContent(
     ) {
         Text(
             text = "Hola, ${uiState.userName.ifBlank { "usuario" }}",
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Black,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = todayDate(),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         CalorieSummaryCard(uiState)
-        Spacer(modifier = Modifier.height(12.dp))
-        MacrosRow(uiState)
         Spacer(modifier = Modifier.height(16.dp))
+        MacrosRow(uiState)
+        Spacer(modifier = Modifier.height(24.dp))
         CaloriesComparisonChart(
             consumed = uiState.totalCalories,
             goal = uiState.goalCalories
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
         QuickActionsSection(
             onNavigateToAddMeal = onNavigateToAddMeal,
             onNavigateToProgress = onNavigateToProgress,
@@ -203,19 +217,30 @@ private fun ErrorContent(
         modifier = modifier.padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Icon(
+            imageVector = Icons.Filled.Warning,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.error,
+            modifier = Modifier.size(64.dp).padding(bottom = 16.dp)
+        )
         Text(
             text = "No se pudieron cargar tus datos",
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = message,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier.padding(vertical = 12.dp)
         )
-        Button(onClick = onRetry) {
+        Button(
+            onClick = onRetry,
+            shape = MaterialTheme.shapes.large,
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
+        ) {
             Text("Reintentar")
         }
     }
@@ -231,44 +256,46 @@ private fun CalorieSummaryCard(uiState: HomeViewModel.HomeUiState) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.extraLarge, // Rounded generous corners
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
     ) {
-        Column(modifier = Modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(24.dp)) {
             Text(
                 text = "Calorías consumidas hoy",
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(
                     text = "${uiState.totalCalories}",
-                    style = MaterialTheme.typography.displaySmall,
-                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.displayMedium,
+                    fontWeight = FontWeight.Black,
                     color = MaterialTheme.colorScheme.onPrimary
                 )
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "/ ${uiState.goalCalories} kcal",
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onPrimary
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(24.dp))
             LinearProgressIndicator(
                 progress = { fraction },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(10.dp)
-                    .clip(RoundedCornerShape(5.dp)),
-                color = Color.White,
-                trackColor = Color.White.copy(alpha = 0.3f)
+                    .height(12.dp)
+                    .clip(RoundedCornerShape(6.dp)),
+                color = MaterialTheme.colorScheme.tertiary, // Yellow/Mustard pop on green!
+                trackColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.3f)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = "${(fraction * 100).toInt()}% del objetivo diario",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.9f)
             )
         }
@@ -284,19 +311,19 @@ private fun MacrosRow(uiState: HomeViewModel.HomeUiState) {
         MacroCard(
             label = "Proteínas",
             value = uiState.totalProteins,
-            color = PrimaryGreen,
+            color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f)
         )
         MacroCard(
             label = "Carbohidratos",
             value = uiState.totalCarbs,
-            color = SecondaryGreen,
+            color = MaterialTheme.colorScheme.secondary,
             modifier = Modifier.weight(1f)
         )
         MacroCard(
             label = "Grasas",
             value = uiState.totalFats,
-            color = TertiaryGreen,
+            color = MaterialTheme.colorScheme.tertiary,
             modifier = Modifier.weight(1f)
         )
     }
@@ -311,23 +338,29 @@ private fun MacroCard(
 ) {
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        shape = MaterialTheme.shapes.large,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp)) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Box(
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(12.dp)
                     .background(color, CircleShape)
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
             Text(
                 text = value.formatMacro(),
                 style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface
             )
             Text(
                 text = "$label (g)",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
@@ -341,58 +374,54 @@ private fun CaloriesComparisonChart(
     modifier: Modifier = Modifier
 ) {
     val chartMax = max(consumed.toFloat(), goal.toFloat()).coerceAtLeast(1f)
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val secondaryColor = MaterialTheme.colorScheme.secondaryContainer
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                text = "Calorías: consumidas vs objetivo",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold
+    TarjetaFocusMeal(modifier = modifier) {
+        Text(
+            text = "Resumen de calorías",
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(160.dp)
+        ) {
+            val barWidth = 48.dp.toPx() 
+            val gap = 48.dp.toPx()
+            
+            val totalWidth = (barWidth * 2) + gap
+            val startX = (size.width - totalWidth) / 2f
+            
+            val consumedHeight = ((consumed / chartMax) * size.height).coerceIn(0f, size.height)
+            val goalHeight = ((goal / chartMax) * size.height).coerceIn(0f, size.height)
+            val corner = CornerRadius(barWidth / 2f, barWidth / 2f)
+
+            // Consumed Bar
+            drawRoundRect(
+                color = primaryColor,
+                topLeft = Offset(startX, size.height - consumedHeight),
+                size = Size(barWidth, consumedHeight),
+                cornerRadius = corner
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            Canvas(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp)
-            ) {
-                // Thinner, sleeker bars
-                val barWidth = 40.dp.toPx() 
-                val gap = 40.dp.toPx()
-                
-                // Center the two bars in the middle of the canvas
-                val totalWidth = (barWidth * 2) + gap
-                val startX = (size.width - totalWidth) / 2f
-                
-                val consumedHeight = ((consumed / chartMax) * size.height).coerceIn(0f, size.height)
-                val goalHeight = ((goal / chartMax) * size.height).coerceIn(0f, size.height)
-                val corner = CornerRadius(barWidth / 2f, barWidth / 2f)
-
-                // Consumed Bar
-                drawRoundRect(
-                    color = PrimaryGreen,
-                    topLeft = Offset(startX, size.height - consumedHeight),
-                    size = Size(barWidth, consumedHeight),
-                    cornerRadius = corner
-                )
-                // Goal Bar
-                drawRoundRect(
-                    color = Color(0xFF94A3B8), // Slate 400 for a nicer gray
-                    topLeft = Offset(startX + barWidth + gap, size.height - goalHeight),
-                    size = Size(barWidth, goalHeight),
-                    cornerRadius = corner
-                )
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                LegendItem(PrimaryGreen, "Consumidas:\n$consumed kcal")
-                LegendItem(Color(0xFF94A3B8), "Objetivo:\n$goal kcal")
-            }
+            // Goal Bar
+            drawRoundRect(
+                color = secondaryColor,
+                topLeft = Offset(startX + barWidth + gap, size.height - goalHeight),
+                size = Size(barWidth, goalHeight),
+                cornerRadius = corner
+            )
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            LegendItem(primaryColor, "Consumidas:\n$consumed kcal")
+            LegendItem(secondaryColor, "Objetivo:\n$goal kcal")
         }
     }
 }
@@ -402,11 +431,15 @@ private fun LegendItem(color: Color, text: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Box(
             modifier = Modifier
-                .size(10.dp)
+                .size(12.dp)
                 .background(color, CircleShape)
         )
-        Spacer(modifier = Modifier.width(6.dp))
-        Text(text, style = MaterialTheme.typography.bodySmall)
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text, 
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
@@ -419,31 +452,32 @@ private fun QuickActionsSection(
     Column {
         Text(
             text = "Accesos rápidos",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(16.dp))
         ActionCard(
             icon = Icons.Filled.Add,
             title = "Agregar comida",
             subtitle = "Registra lo que comiste hoy",
-            color = PrimaryGreen,
+            color = MaterialTheme.colorScheme.primary,
             onClick = onNavigateToAddMeal
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         ActionCard(
             icon = Icons.Filled.DateRange,
             title = "Ver progreso",
             subtitle = "Consulta tu evolución",
-            color = SecondaryGreen,
+            color = MaterialTheme.colorScheme.secondary,
             onClick = onNavigateToProgress
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         ActionCard(
             icon = Icons.Filled.Menu,
-            title = "Planes",
-            subtitle = "Explora tus planes nutricionales",
-            color = TertiaryGreen,
+            title = "Planes nutricionales",
+            subtitle = "Explora tus dietas asignadas",
+            color = MaterialTheme.colorScheme.tertiary,
             onClick = onNavigateToPlans
         )
     }
@@ -457,25 +491,24 @@ private fun ActionCard(
     color: Color,
     onClick: () -> Unit
 ) {
-    ElevatedCard(
+    TarjetaFocusMeal(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
-                    .background(color.copy(alpha = 0.15f), RoundedCornerShape(12.dp)),
+                    .size(56.dp)
+                    .background(color.copy(alpha = 0.15f), MaterialTheme.shapes.medium),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = color,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(28.dp)
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -483,11 +516,12 @@ private fun ActionCard(
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }

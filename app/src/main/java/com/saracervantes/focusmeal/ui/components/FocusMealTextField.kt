@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import com.saracervantes.focusmeal.ui.theme.PrimaryGreen
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun FocusMealTextField(
@@ -40,8 +40,8 @@ fun FocusMealTextField(
             }
         },
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = PrimaryGreen,
-            focusedLabelColor = PrimaryGreen
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary
         )
     )
 }

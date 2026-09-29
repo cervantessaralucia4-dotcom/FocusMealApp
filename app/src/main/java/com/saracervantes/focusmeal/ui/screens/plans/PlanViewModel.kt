@@ -95,6 +95,12 @@ class PlanViewModel(
             val userResult = userRepository.getUser(userId)
             if (userResult is Resource.Success && userResult.data != null) {
                 val user = userResult.data
+                
+                if (!user.isPremium) {
+                    _uiState.update { it.copy(isLoading = false, error = "Esta es una funcionalidad Premium. Actualiza tu cuenta para usar IA.") }
+                    return@launch
+                }
+
                 // Ask Gemini to generate the plan
                 val aiResult = aiRepository.generateDietPlan(
                     weight = user.weight,

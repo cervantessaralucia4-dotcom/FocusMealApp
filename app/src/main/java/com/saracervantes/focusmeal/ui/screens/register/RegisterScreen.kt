@@ -187,6 +187,86 @@ fun RegisterScreen(
             }
         }
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        var isPremium by remember { mutableStateOf(false) }
+        var showPaymentDialog by remember { mutableStateOf(false) }
+
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Checkbox(
+                checked = isPremium,
+                onCheckedChange = { checked ->
+                    if (checked) {
+                        showPaymentDialog = true
+                    } else {
+                        isPremium = false
+                    }
+                }
+            )
+            Text(text = "Quiero ser Premium (Desbloquear IA y Fotos)", style = MaterialTheme.typography.bodyMedium)
+        }
+
+        if (showPaymentDialog) {
+            var cardNumber by remember { mutableStateOf("") }
+            var cvc by remember { mutableStateOf("") }
+
+            AlertDialog(
+                onDismissRequest = { showPaymentDialog = false },
+                title = { Text("Pasarela de Pago Ficticia") },
+                text = {
+                    Column {
+                        Text("Ingresa los datos para activar tu cuenta Premium.")
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = cardNumber,
+                            onValueChange = { cardNumber = it },
+                            label = { Text("Número de Tarjeta") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = cvc,
+                            onValueChange = { cvc = it },
+                            label = { Text("CVC") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        if (cardNumber.isNotBlank() && cvc.isNotBlank()) {
+                            isPremium = true
+                            showPaymentDialog = false
+                            viewModel.setExtraFields(age.toIntOrNull() ?: 0, gender, dietType, true)
+                        }
+                    }) {
+                        Text("Pagar")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        isPremium = false
+                        showPaymentDialog = false
+                        viewModel.setExtraFields(age.toIntOrNull() ?: 0, gender, dietType, false)
+                    }) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+
+        LaunchedEffect(age, gender, dietType, isPremium) {
+            viewModel.setExtraFields(
+                age.toIntOrNull() ?: 0,
+                gender,
+                dietType,
+                isPremium
+            )
+        }
+
         val state = registerState
         if (state is Resource.Error) {
             Text(

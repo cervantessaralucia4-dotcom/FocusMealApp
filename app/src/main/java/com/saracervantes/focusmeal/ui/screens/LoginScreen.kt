@@ -8,15 +8,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RestaurantMenu
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.saracervantes.focusmeal.data.util.Resource
-import com.saracervantes.focusmeal.ui.components.FocusMealTextField
+import com.saracervantes.focusmeal.ui.components.BotonPrimario
+import com.saracervantes.focusmeal.ui.components.CampoTexto
+import com.saracervantes.focusmeal.ui.components.TarjetaFocusMeal
 import com.saracervantes.focusmeal.ui.screens.login.LoginViewModel
 
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel,
-    onLoginSuccess: () -> Unit,
+    onLoginSuccess: (String) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
@@ -25,7 +28,8 @@ fun LoginScreen(
 
     LaunchedEffect(loginState) {
         if (loginState is Resource.Success) {
-            onLoginSuccess()
+            val route = (loginState as Resource.Success<String>).data ?: "home"
+            onLoginSuccess(route)
             viewModel.resetState()
         }
     }
@@ -33,23 +37,16 @@ fun LoginScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
-        ElevatedCard(
+        TarjetaFocusMeal(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
-            shape = MaterialTheme.shapes.extraLarge,
-            elevation = CardDefaults.elevatedCardElevation(defaultElevation = 8.dp),
-            colors = CardDefaults.elevatedCardColors(
-                containerColor = MaterialTheme.colorScheme.surface
-            )
+                .padding(24.dp)
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(32.dp),
+                modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -74,48 +71,50 @@ fun LoginScreen(
                     modifier = Modifier.padding(bottom = 32.dp)
                 )
 
-        FocusMealTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = "Correo electrónico"
-        )
-
-        FocusMealTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = "Contraseña",
-            isPassword = true
-        )
-
-        if (loginState is Resource.Error) {
-            Text(
-                text = loginState?.message ?: "Error al iniciar sesión",
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { viewModel.login(email, password) },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = loginState !is Resource.Loading,
-            shape = MaterialTheme.shapes.medium
-        ) {
-            if (loginState is Resource.Loading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    color = MaterialTheme.colorScheme.onPrimary
+                CampoTexto(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = "Correo electrónico"
                 )
-            } else {
-                Text("Iniciar Sesión")
-            }
-        }
 
-        TextButton(onClick = onNavigateToRegister) {
-            Text("¿No tienes cuenta? Regístrate gratis")
-        }
+                CampoTexto(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = "Contraseña",
+                    isPassword = true
+                )
+
+                if (loginState is Resource.Error) {
+                    Text(
+                        text = loginState?.message ?: "Error al iniciar sesión",
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                if (loginState is Resource.Loading) {
+                    CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                } else {
+                    BotonPrimario(
+                        text = "Iniciar Sesión",
+                        onClick = { viewModel.login(email, password) }
+                    )
+                }
+                
+                Spacer(modifier = Modifier.height(8.dp))
+
+                TextButton(onClick = onNavigateToRegister) {
+                    Text(
+                        "¿No tienes cuenta? Regístrate gratis",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

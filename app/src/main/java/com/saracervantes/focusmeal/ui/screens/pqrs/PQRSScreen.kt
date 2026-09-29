@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.saracervantes.focusmeal.data.model.PQRS
 import com.saracervantes.focusmeal.ui.components.FocusMealTextField
-import com.saracervantes.focusmeal.ui.theme.PrimaryGreen
+import androidx.compose.material3.MaterialTheme
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -195,7 +195,7 @@ private fun PQRSItem(record: com.saracervantes.focusmeal.data.model.PQRS, date: 
                     record.type,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
-                    color = PrimaryGreen
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     record.status,

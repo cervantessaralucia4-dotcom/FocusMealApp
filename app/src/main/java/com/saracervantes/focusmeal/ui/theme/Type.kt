@@ -6,20 +6,24 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
+// Configuración de Tipografía
+// Idealmente se debería usar un provider de Google Fonts para Nunito/Quicksand e Inter.
+// Aquí dejamos definida la jerarquía para que los componentes la adopten.
+
 val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.15.sp
+    displayLarge = TextStyle(
+        fontFamily = FontFamily.SansSerif, // Representaría Nunito/Quicksand
+        fontWeight = FontWeight.Black,
+        fontSize = 57.sp,
+        lineHeight = 64.sp,
+        letterSpacing = (-0.25).sp
     ),
-    bodyMedium = TextStyle(
+    displayMedium = TextStyle(
         fontFamily = FontFamily.SansSerif,
-        fontWeight = FontWeight.Normal,
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
-        letterSpacing = 0.25.sp
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 45.sp,
+        lineHeight = 52.sp,
+        letterSpacing = 0.sp
     ),
     headlineLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
@@ -42,8 +46,22 @@ val Typography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.15.sp
     ),
+    bodyLarge = TextStyle(
+        fontFamily = FontFamily.Default, // Representaría Inter/Roboto
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.15.sp
+    ),
+    bodyMedium = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        letterSpacing = 0.25.sp
+    ),
     labelSmall = TextStyle(
-        fontFamily = FontFamily.SansSerif,
+        fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
         fontSize = 11.sp,
         lineHeight = 16.sp,

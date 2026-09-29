@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.saracervantes.focusmeal.ui.components.FocusMealTextField
-import com.saracervantes.focusmeal.ui.theme.PrimaryGreen
+import androidx.compose.material3.MaterialTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -231,7 +231,7 @@ private fun PlanCard(plan: com.saracervantes.focusmeal.data.model.Plan) {
                     Text(
                         "${plan.caloriesPerDay} kcal/día",
                         style = MaterialTheme.typography.bodySmall,
-                        color = PrimaryGreen
+                        color = MaterialTheme.colorScheme.primary
                     )
                 }
                 IconButton(onClick = {}) {

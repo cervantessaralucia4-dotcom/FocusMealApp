@@ -21,12 +21,12 @@ class AuthRepository(
         }
     }
 
-    suspend fun signUp(email: String, pass: String, name: String, age: Int = 0, gender: String = "", dietType: String = ""): Resource<Boolean> {
+    suspend fun signUp(email: String, pass: String, name: String, age: Int = 0, gender: String = "", dietType: String = "", isPremium: Boolean = false): Resource<Boolean> {
         return try {
             val result = auth.createUserWithEmailAndPassword(email, pass).await()
             val userId = result.user?.uid ?: throw Exception("User creation failed")
             
-            val user = User(id = userId, name = name, email = email, age = age, gender = gender, dietType = dietType)
+            val user = User(id = userId, name = name, email = email, age = age, gender = gender, dietType = dietType, isPremium = isPremium)
             firestore.collection("users").document(userId).set(user).await()
             
             Resource.Success(true)

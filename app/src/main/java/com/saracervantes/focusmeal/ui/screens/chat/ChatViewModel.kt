@@ -22,11 +22,30 @@ class ChatViewModel(
         val error: String? = null,
         val messages: List<ChatMessage> = emptyList(),
         val newMessage: String = "",
-        val conversationId: String = ""
+        val conversationId: String = "",
+        val isPremium: Boolean = false
     )
 
     private val _uiState = MutableStateFlow(ChatUiState())
     val uiState: StateFlow<ChatUiState> = _uiState.asStateFlow()
+
+    private val userRepository = com.saracervantes.focusmeal.data.repository.UserRepository(com.google.firebase.firestore.FirebaseFirestore.getInstance())
+
+    init {
+        checkPremiumStatus()
+    }
+
+    private fun checkPremiumStatus() {
+        viewModelScope.launch {
+            val userId = authRepository.currentUser?.uid ?: return@launch
+            when (val userResult = userRepository.getUser(userId)) {
+                is Resource.Success -> {
+                    _uiState.update { it.copy(isPremium = userResult.data?.isPremium == true) }
+                }
+                else -> {}
+            }
+        }
+    }
 
     fun setConversationId(id: String) {
         _uiState.update { it.copy(conversationId = id) }

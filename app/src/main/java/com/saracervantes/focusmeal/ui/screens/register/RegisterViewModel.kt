@@ -16,11 +16,13 @@ class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
     private var age: Int = 0
     private var gender: String = ""
     private var dietType: String = ""
+    private var isPremium: Boolean = false
 
-    fun setExtraFields(age: Int, gender: String, dietType: String) {
+    fun setExtraFields(age: Int, gender: String, dietType: String, isPremium: Boolean = false) {
         this.age = age
         this.gender = gender
         this.dietType = dietType
+        this.isPremium = isPremium
     }
 
     fun register(email: String, pass: String, name: String) {
@@ -31,7 +33,7 @@ class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
 
         viewModelScope.launch {
             _registerState.value = Resource.Loading()
-            _registerState.value = repository.signUp(email, pass, name, age, gender, dietType)
+            _registerState.value = repository.signUp(email, pass, name, age, gender, dietType, isPremium)
         }
     }
     
@@ -40,5 +42,6 @@ class RegisterViewModel(private val repository: AuthRepository) : ViewModel() {
         age = 0
         gender = ""
         dietType = ""
+        isPremium = false
     }
 }

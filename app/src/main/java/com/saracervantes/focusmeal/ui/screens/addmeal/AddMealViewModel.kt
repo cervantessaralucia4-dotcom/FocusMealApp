@@ -84,10 +84,24 @@ class AddMealViewModel(
     }
 
     private val aiRepository = com.saracervantes.focusmeal.data.repository.AiRepository()
+    private val userRepository = com.saracervantes.focusmeal.data.repository.UserRepository(com.google.firebase.firestore.FirebaseFirestore.getInstance())
 
     fun analyzeImage(bitmap: android.graphics.Bitmap) {
         viewModelScope.launch {
+            val userId = authRepository.currentUser?.uid ?: return@launch
             _uiState.update { it.copy(isLoading = true, error = null) }
+            
+            val userResult = userRepository.getUser(userId)
+            if (userResult is Resource.Success && userResult.data != null) {
+                if (!userResult.data.isPremium) {
+                    _uiState.update { it.copy(isLoading = false, error = "Esta es una funcionalidad Premium. Actualiza tu cuenta para usar fotos.") }
+                    return@launch
+                }
+            } else {
+                _uiState.update { it.copy(isLoading = false, error = "No se pudo obtener el perfil del usuario") }
+                return@launch
+            }
+
             val result = aiRepository.analyzeFoodImage(bitmap)
             when (result) {
                 is Resource.Success -> {
