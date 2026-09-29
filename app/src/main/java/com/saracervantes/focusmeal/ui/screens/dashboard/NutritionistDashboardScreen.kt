@@ -15,13 +15,7 @@ import com.saracervantes.focusmeal.ui.components.TarjetaFocusMeal
 fun NutritionistDashboardScreen() {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Panel de Nutrición", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
+            com.saracervantes.focusmeal.ui.components.FocusMealTopBar()
         }
     ) { padding ->
         Box(

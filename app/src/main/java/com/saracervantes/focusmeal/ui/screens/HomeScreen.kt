@@ -75,67 +75,20 @@ fun HomeScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            TopAppBar(
-                title = { 
-                    Image(
-                        painter = painterResource(id = R.drawable.logo),
-                        contentDescription = "FocusMeal Logo",
-                        modifier = Modifier.height(40.dp)
-                    )
-                },
-                actions = {
-                    IconButton(onClick = viewModel::loadDashboard) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "Actualizar")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    actionIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+            com.saracervantes.focusmeal.ui.components.FocusMealTopBar(
+                onRefresh = viewModel::loadDashboard
             )
         },
         bottomBar = {
-            NavigationBar(
-                containerColor = MaterialTheme.colorScheme.surface
-            ) {
-                NavigationBarItem(
-                    selected = true,
-                    onClick = {},
-                    icon = { Icon(Icons.Filled.Home, contentDescription = null) },
-                    label = { Text("Inicio") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToAddMeal,
-                    icon = { Icon(Icons.Filled.List, contentDescription = null) },
-                    label = { Text("Comidas") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToProgress,
-                    icon = { Icon(Icons.Default.DateRange, contentDescription = null) },
-                    label = { Text("Progreso") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToPlans,
-                    icon = { Icon(Icons.Default.Menu, contentDescription = null) },
-                    label = { Text("Planes") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToChat,
-                    icon = { Icon(Icons.Default.Chat, contentDescription = null) },
-                    label = { Text("Chat") }
-                )
-                NavigationBarItem(
-                    selected = false,
-                    onClick = onNavigateToProfile,
-                    icon = { Icon(Icons.Default.Person, contentDescription = null) },
-                    label = { Text("Perfil") }
-                )
-            }
+            com.saracervantes.focusmeal.ui.components.FocusMealBottomBar(
+                currentRoute = "Inicio",
+                onNavigateHome = {},
+                onNavigateToAddMeal = onNavigateToAddMeal,
+                onNavigateToProgress = onNavigateToProgress,
+                onNavigateToPlans = onNavigateToPlans,
+                onNavigateToChat = onNavigateToChat,
+                onNavigateToProfile = onNavigateToProfile
+            )
         }
     ) { padding ->
         Box(

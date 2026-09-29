@@ -62,12 +62,17 @@ class HomeViewModel(
                 is Resource.Loading -> Unit
             }
 
-            val goal = loadGoalCalories(userId)
+            val user = when (val result = userRepository.getUser(userId)) {
+                is Resource.Success -> result.data
+                else -> null
+            }
+            val goal = loadGoalCalories(user)
 
             _uiState.update {
                 it.copy(
                     isLoading = false,
                     error = error,
+                    userName = user?.name ?: "Usuario",
                     todayMeals = todayMeals,
                     totalCalories = todayMeals.sumOf { meal -> meal.calories },
                     totalProteins = todayMeals.fold(0f) { acc, meal -> acc + meal.proteins },
@@ -79,11 +84,8 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun loadGoalCalories(userId: String): Int {
-        val user = when (val result = userRepository.getUser(userId)) {
-            is Resource.Success -> result.data
-            else -> null
-        } ?: return DEFAULT_GOAL_CALORIES
+    private suspend fun loadGoalCalories(user: com.saracervantes.focusmeal.data.model.User?): Int {
+        if (user == null) return DEFAULT_GOAL_CALORIES
 
         val dietType = user.dietType
         if (dietType.isBlank()) return DEFAULT_GOAL_CALORIES

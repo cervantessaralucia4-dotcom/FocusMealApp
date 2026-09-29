@@ -15,13 +15,7 @@ import com.saracervantes.focusmeal.ui.components.TarjetaFocusMeal
 fun AdminDashboardScreen() {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("Panel Administrativo", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary
-                )
-            )
+            com.saracervantes.focusmeal.ui.components.FocusMealTopBar()
         }
     ) { padding ->
         Box(

@@ -10,6 +10,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.*
 
 @Composable
 fun BotonPrimario(
@@ -156,6 +159,114 @@ fun BadgeEspecial(texto: String = "PREMIUM", modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FocusMealTopBar(
+    onRefresh: (() -> Unit)? = null,
+    navigationIcon: @Composable () -> Unit = {}
+) {
+    TopAppBar(
+        title = { 
+            Box(modifier = Modifier.fillMaxWidth().padding(end = if (onRefresh != null) 0.dp else 48.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
+                androidx.compose.foundation.Image(
+                    painter = androidx.compose.ui.res.painterResource(id = com.saracervantes.focusmeal.R.drawable.logo),
+                    contentDescription = "FocusMeal Logo",
+                    modifier = Modifier.height(48.dp)
+                )
+            }
+        },
+        navigationIcon = navigationIcon,
+        actions = {
+            if (onRefresh != null) {
+                IconButton(onClick = onRefresh) {
+                    Icon(Icons.Filled.Refresh, contentDescription = "Actualizar")
+                }
+            } else {
+                Spacer(modifier = Modifier.width(48.dp))
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
+            navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
+        )
+    )
+}
+
+@Composable
+fun FocusMealBottomBar(
+    currentRoute: String,
+    onNavigateHome: () -> Unit = {},
+    onNavigateToAddMeal: () -> Unit = {},
+    onNavigateToProgress: () -> Unit = {},
+    onNavigateToPlans: () -> Unit = {},
+    onNavigateToChat: () -> Unit = {},
+    onNavigateToProfile: () -> Unit = {}
+) {
+    NavigationBar(
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.primary,
+        tonalElevation = 8.dp
+    ) {
+        val colors = NavigationBarItemDefaults.colors(
+            selectedIconColor = MaterialTheme.colorScheme.onPrimary,
+            selectedTextColor = MaterialTheme.colorScheme.primary,
+            indicatorColor = MaterialTheme.colorScheme.primary,
+            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Inicio",
+            onClick = onNavigateHome,
+            icon = { Icon(Icons.Filled.Home, contentDescription = null) },
+            label = { Text("Inicio", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Comidas",
+            onClick = onNavigateToAddMeal,
+            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = null) },
+            label = { Text("Comidas", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Progreso",
+            onClick = onNavigateToProgress,
+            icon = { Icon(Icons.Filled.DateRange, contentDescription = null) },
+            label = { Text("Progreso", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Planes",
+            onClick = onNavigateToPlans,
+            icon = { Icon(Icons.Filled.Menu, contentDescription = null) },
+            label = { Text("Planes", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Chat",
+            onClick = onNavigateToChat,
+            icon = { Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = null) },
+            label = { Text("Chat", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
+        )
+        NavigationBarItem(
+            selected = currentRoute == "Perfil",
+            onClick = onNavigateToProfile,
+            icon = { Icon(Icons.Filled.Person, contentDescription = null) },
+            label = { Text("Perfil", maxLines = 1) },
+            alwaysShowLabel = false,
+            colors = colors
         )
     }
 }

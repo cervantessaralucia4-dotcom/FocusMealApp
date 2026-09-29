@@ -111,9 +111,9 @@ private fun ProfileForm(
 ) {
     FocusMealTextField(
         value = uiState.name,
-        onValueChange = { onFieldChange("name", it) },
+        onValueChange = { },
         label = "Nombre",
-        enabled = isEditing
+        enabled = false
     )
 
     FocusMealTextField(
@@ -130,47 +130,12 @@ private fun ProfileForm(
         enabled = isEditing
     )
 
-    if (isEditing) {
-        ExposedDropdownMenuBox(
-            expanded = expandedGender.value,
-            onExpandedChange = { expandedGender.value = !expandedGender.value }
-        ) {
-            OutlinedTextField(
-                value = uiState.gender,
-                onValueChange = { },
-                label = { Text("Género") },
-                readOnly = true,
-                modifier = Modifier.fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedGender.value) },
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = MaterialTheme.colorScheme.primary,
-                    focusedLabelColor = MaterialTheme.colorScheme.primary
-                )
-            )
-            ExposedDropdownMenu(
-                expanded = expandedGender.value,
-                onDismissRequest = { expandedGender.value = false }
-            ) {
-                GENDER_OPTIONS.forEach { option ->
-                    DropdownMenuItem(
-                        text = { Text(option) },
-                        onClick = {
-                            onFieldChange("gender", option)
-                            expandedGender.value = false
-                        }
-                    )
-                }
-            }
-        }
-    } else {
-        FocusMealTextField(
-            value = uiState.gender,
-            onValueChange = { },
-            label = "Género",
-            enabled = false
-        )
-    }
+    FocusMealTextField(
+        value = uiState.gender,
+        onValueChange = { },
+        label = "Género",
+        enabled = false
+    )
 
     FocusMealTextField(
         value = uiState.weight,
